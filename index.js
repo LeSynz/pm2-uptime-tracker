@@ -1,9 +1,5 @@
-// Entry point for the PM2 Uptime Tracker
-// This file maintains backward compatibility while using the new modular structure
-
 const UptimeTracker = require('./src/app');
 
-// Since this is the main entry point, we need to manually initialize the app
 const fs = require('fs');
 const path = require('path');
 const { config, validateConfig } = require('./src/config');

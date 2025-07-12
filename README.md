@@ -1,14 +1,17 @@
-# PM2 Uptime Tracker
+# PM2 Uptime Tracker v1.0.0
 
-A Node.js application that monitors other PM2 processes (like Discord bots, web servers, etc.) and sends uptime notifications to Discord via webhooks.
+A Node.js application that monitors other PM2 processes (like Discord bots, web servers, etc.) and sends real-time status notifications to Discord via webhooks.
 
-## Features
+## ✨ Features
 
-- Monitor any PM2 process in real-time (Discord bots, web apps, APIs, etc.)
-- Send status updates to Discord with rich embeds
-- Different embed colors based on process status (online, offline, error, restarting)
-- Customizable embed messages
-- Environment-based configuration
+- **Real-time monitoring** - Detects status changes within 5 seconds
+- **Smart notifications** - Immediate alerts for restarts, crashes, and recoveries
+- **Rich Discord embeds** - Color-coded status indicators with detailed information
+- **Multiple process status tracking** - Online, offline, error, restarting states
+- **Configurable monitoring** - Environment-based setup with flexible intervals
+- **Comprehensive logging** - Colored, timestamped logs with different severity levels
+- **Restart counting** - Track and display restart events
+- **Error handling** - Graceful degradation and detailed error reporting
 
 ## Prerequisites
 
@@ -27,9 +30,9 @@ A Node.js application that monitors other PM2 processes (like Discord bots, web 
 
 3. Create a `.env` file in the project root with your configuration:
    ```env
-   WEBHOOK_URL=
-   MESSAGE_ID=
-   PROCESS_NAME=
+   WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
+   MESSAGE_ID=1234567890123456789
+   PROCESS_NAME=discord-bot
    UPDATE_INTERVAL=60000
    ```
 
@@ -46,8 +49,8 @@ Create a `.env` file in the project root and configure the following variables:
 
 ### Example .env file:
 ```env
-WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
-MESSAGE_ID=1234567890123456789
+WEBHOOK_URL=https://discord.com/api/webhooks/1393669136483094558/vET7Qla_XvO4LiUvv8zLjKrFrdW8hikV0DzXXJTg2DdxW60snIWkHQa5X9kbLsbcg2cq
+MESSAGE_ID=1393675092654821389
 PROCESS_NAME=discord-bot
 UPDATE_INTERVAL=60000
 ```

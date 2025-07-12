@@ -23,7 +23,13 @@ function formatLastRestart(timestamp) {
 	return date.toLocaleString();
 }
 
-function createStatusEmbed(processName, status, uptime, lastRestart) {
+function createStatusEmbed(
+	processName,
+	status,
+	uptime,
+	lastRestart,
+	metadata = {}
+) {
 	let embedTemplate;
 
 	// Map PM2 status to embed types
@@ -41,6 +47,9 @@ function createStatusEmbed(processName, status, uptime, lastRestart) {
 			break;
 		case 'one-launch-status':
 			embedTemplate = embeds.restarting;
+			break;
+		case 'not-found':
+			embedTemplate = embeds.error;
 			break;
 		default:
 			embedTemplate = embeds.unknown;
@@ -66,6 +75,43 @@ function createStatusEmbed(processName, status, uptime, lastRestart) {
 				.replace(/\$lastRestart/g, formatLastRestart(lastRestart))
 				.replace(/\$processName/g, processName),
 		}));
+	}
+
+	// Add additional fields for status changes and restarts
+	if (metadata.statusChanged) {
+		embed.fields = embed.fields || [];
+		embed.fields.push({
+			name: 'Status Change',
+			value: `🔄 Status changed to **${status}**`,
+			inline: true,
+		});
+	}
+
+	if (metadata.restartDetected) {
+		embed.fields = embed.fields || [];
+		embed.fields.push({
+			name: 'Restart Detected',
+			value: `🔄 Restart #${metadata.restartCount || 1}`,
+			inline: true,
+		});
+	}
+
+	if (metadata.immediate) {
+		embed.fields = embed.fields || [];
+		embed.fields.push({
+			name: 'Alert Type',
+			value: `🚨 **IMMEDIATE NOTIFICATION**`,
+			inline: true,
+		});
+	}
+
+	if (metadata.error) {
+		embed.fields = embed.fields || [];
+		embed.fields.push({
+			name: 'Error',
+			value: `❌ ${metadata.error}`,
+			inline: false,
+		});
 	}
 
 	// Add timestamp

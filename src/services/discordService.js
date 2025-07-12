@@ -1,4 +1,5 @@
 const axios = require('axios');
+const logger = require('../utils/logger');
 
 class DiscordService {
 	constructor(webhookUrl, messageId) {
@@ -17,11 +18,11 @@ class DiscordService {
 					},
 				}
 			);
-			console.log('Uptime updated successfully.');
+			logger.info('Discord embed updated successfully.');
 			return response.data;
 		} catch (error) {
-			console.error(
-				'Error updating uptime:',
+			logger.error(
+				'Error updating Discord embed:',
 				error.response?.data || error.message
 			);
 			throw error;

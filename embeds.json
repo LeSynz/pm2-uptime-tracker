@@ -38,5 +38,10 @@
         "title": "$processName - Status",
         "description": "The status of the process is not specified.",
         "color": 16777215
+    },
+    "not-found": {
+        "title": "$processName - Not Found",
+        "description": "The process could not be found in PM2.",
+        "color": 16711680
     }
 }

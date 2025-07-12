@@ -1,6 +1,6 @@
 {
   "name": "pm2-uptime-tracker",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A PM2 process tracker I created to keep check the status and uptime of my bots via Discord",
   "main": "index.js",
   "scripts": {
