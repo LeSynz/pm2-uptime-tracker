@@ -1,0 +1,18 @@
+{
+  "name": "pm2-uptime-tracker",
+  "version": "0.0.1",
+  "description": "A PM2 process tracker I created to keep check the status and uptime of my bots via Discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "synz.xyz",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.2.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "pm2": "^6.0.8"
+  }
+}
