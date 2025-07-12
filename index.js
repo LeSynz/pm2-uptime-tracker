@@ -1,51 +1,50 @@
-require('dotenv').config();
-const pm2 = require('pm2');
-const axios = require('axios');
+// Entry point for the PM2 Uptime Tracker
+// This file maintains backward compatibility while using the new modular structure
+
+const UptimeTracker = require('./src/app');
+
+// Since this is the main entry point, we need to manually initialize the app
 const fs = require('fs');
 const path = require('path');
-const { send } = require('process');
+const { config, validateConfig } = require('./src/config');
+const logger = require('./src/utils/logger');
 
-const WEBHOOK_URL = process.env.WEBHOOK_URL;
-const MESSAGE_ID = process.env.MESSAGE_ID;
-const PROCESS_NAME = 'verify-tag'; // the name of the process you want to monitor
+function init() {
+	logger.info('Initializing PM2 Uptime Tracker...');
 
-if (!WEBHOOK_URL) {
-	console.error('WEBHOOK_URL is not set in the environment variables.');
-	process.exit(1);
-}
+	// Validate configuration
+	logger.info('Validating configuration...');
+	validateConfig();
+	logger.info('Configuration validated successfully.');
 
-if (!MESSAGE_ID) {
-	console.error(
-		'MESSAGE_ID is not set in the environment variables.\nPlease make sure to have you webhook send a message and copy the ID of that message into the .env file.'
-	);
-	process.exit(1);
-}
-
-const uptimeMap = new Map();
-
-// Embed for uptime tracking
-const embed = {
-	title: 'Uptime Tracker',
-	description:
-		'Uptime Tracker is in development! Please check back later for updates.',
-	color: 0x5dca6e, // Use an integer for color
-	fields: [],
-	timestamp: new Date(),
-	footer: {
-		text: 'Uptime Tracker - Made by synz.xyz',
-	},
-};
-
-// Function to send the embed to Discord
-async function sendEmbed() {
-	try {
-		await axios.post(WEBHOOK_URL, {
-			content: '',
-			embeds: [embed],
-		});
-	} catch (error) {
-		console.error('Error sending embed:', error);
+	// Check if embeds.json exists
+	if (!fs.existsSync(path.join(__dirname, 'embeds.json'))) {
+		logger.error(
+			'embeds.json file not found. Please ensure the file exists in the project root.'
+		);
+		process.exit(1);
+	} else {
+		logger.info('Using embeds from embeds.json');
 	}
+
+	// Create and start the uptime tracker
+	logger.info('Creating uptime tracker...');
+	const tracker = new UptimeTracker();
+	logger.info('Starting uptime tracker...');
+	tracker.start();
+
+	// Graceful shutdown
+	process.on('SIGINT', () => {
+		logger.info('Received SIGINT. Shutting down gracefully...');
+		tracker.stop();
+		process.exit(0);
+	});
+
+	process.on('SIGTERM', () => {
+		logger.info('Received SIGTERM. Shutting down gracefully...');
+		tracker.stop();
+		process.exit(0);
+	});
 }
 
-sendEmbed();
+init();

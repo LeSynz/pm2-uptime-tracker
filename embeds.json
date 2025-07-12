@@ -1,0 +1,42 @@
+{
+    "restarting": {
+        "title": "$processName - Restarting",
+        "description": "The process is currently restarting.",
+        "color": 4380038
+    },
+    "online": {
+        "title": "$processName - Online",
+        "description": "The process is online and running.",
+        "fields": [
+            {
+                "name": "Uptime",
+                "value": "$uptime"
+            },
+            {
+                "name": "Last Restart",
+                "value": "$lastRestart"
+            }
+        ],
+        "color": 4380024
+    },
+    "offline": {
+        "title": "$processName - Offline",
+        "description": "The process is currently offline.",
+        "color": 16711680
+    },
+    "error": {
+        "title": "$processName - Error",
+        "description": "The process has encountered an error.",
+        "color": 16711680
+    },
+    "unknown": {
+        "title": "$processName - Status Unknown",
+        "description": "The status of the process is unknown.",
+        "color": 16777215
+    },
+    "generic": {
+        "title": "$processName - Status",
+        "description": "The status of the process is not specified.",
+        "color": 16777215
+    }
+}
