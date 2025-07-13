@@ -1,4 +1,4 @@
-# PM2 Uptime Tracker v2.0.0
+# PM2 Uptime Tracker v1.0.0-beta.1
 
 A fully customizable Node.js application that monitors PM2 processes (like Discord bots, web servers, etc.) and sends real-time status notifications to Discord via webhooks.
 
@@ -308,7 +308,7 @@ If you encounter any issues:
 ---
 
 **Author:** synz.xyz  
-**Version:** 2.0.0
+**Version:** 1.0.0-beta.1
 │   │   ├── discordService.js # Discord webhook service
 │   │   └── uptimeService.js  # Uptime formatting utilities
 │   ├── utils/
