@@ -1,16 +1,29 @@
 {
   "name": "pm2-uptime-tracker",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "A PM2 process tracker I created to keep check the status and uptime of my bots via Discord",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "node src/app.js",
+    "setup": "node setup-wizard.js",
+    "test": "node test-comprehensive.js",
+    "test:config": "node test-config.js",
+    "test:comprehensive": "node test-comprehensive.js",
+    "test:discord": "node test-discord.js",
+    "test:pm2": "node test-pm2.js",
+    "test:live": "node test-live.js",
+    "test:metrics": "node test-metrics.js",
+    "test:debug": "DEBUG=* node test-comprehensive.js",
+    "test:quick": "node -e \"console.log('🚀 Quick test...'); require('./src/config'); console.log('✅ Basic config loading works!');\""
   },
   "author": "synz.xyz",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.10.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.0",
+    "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "pm2": "^6.0.8"

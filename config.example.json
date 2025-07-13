@@ -1,0 +1,113 @@
+{
+  "_comment": "PM2 Uptime Tracker Configuration Example",
+  "_description": "Copy this file to config.json and customize for your needs",
+  
+  "discord": {
+    "_comment": "Discord webhook configuration",
+    "webhookUrl": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN",
+    "messageId": "YOUR_MESSAGE_ID",
+    "username": "PM2 Uptime Tracker",
+    "avatarUrl": "https://cdn.discordapp.com/embed/avatars/0.png"
+  },
+  
+  "monitoring": {
+    "_comment": "Process monitoring settings",
+    "processName": "my-app",
+    "updateInterval": 60000,
+    "quickCheckInterval": 5000,
+    "enableQuickChecks": true,
+    "enableImmediateNotifications": true,
+    "enableEventListeners": true
+  },
+  
+  "notifications": {
+    "_comment": "Notification behavior settings",
+    "statusChanges": {
+      "enabled": true,
+      "notifyOnOnline": true,
+      "notifyOnOffline": true,
+      "notifyOnError": true,
+      "notifyOnRestart": true,
+      "notifyOnStop": true,
+      "notifyOnStart": true,
+      "notifyOnExit": true
+    },
+    "regularUpdates": {
+      "enabled": true,
+      "onlyOnChanges": false
+    },
+    "criticalOnly": false
+  },
+  
+  "embeds": {
+    "_comment": "Discord embed appearance settings",
+    "useCustomEmbeds": true,
+    "embedsFile": "embeds.json",
+    "showUptime": true,
+    "showLastRestart": true,
+    "showRestartCount": true,
+    "showProcessInfo": false,
+    "showTimestamp": true,
+    "includeStatusChangeInfo": true,
+    "includeImmediateNotificationFlag": true,
+    "includeErrorDetails": true
+  },
+  
+  "logging": {
+    "_comment": "Logging configuration",
+    "enabled": true,
+    "level": "info",
+    "showTimestamp": true,
+    "showColors": true,
+    "logToFile": false,
+    "logFile": "logs/uptime-tracker.log"
+  },
+  
+  "advanced": {
+    "_comment": "Advanced settings",
+    "retryAttempts": 3,
+    "retryDelay": 5000,
+    "gracefulShutdown": true,
+    "processMultiple": false,
+    "processNames": ["app1", "app2", "app3"],
+    "enableDataPersistence": true,
+    "dataFile": "data.json"
+  },
+  
+  "features": {
+    "_comment": "Optional feature flags",
+    "enableWebhookFallback": false,
+    "webhookFallbackUrl": "",
+    "enableMetrics": false,
+    "metricsPort": 3000,
+    "enableHealthcheck": false,
+    "healthcheckPort": 3001
+  },
+  
+  "_presets": {
+    "_comment": "Common configuration presets",
+    "silent": {
+      "notifications": {
+        "regularUpdates": { "enabled": false },
+        "criticalOnly": true
+      }
+    },
+    "minimal": {
+      "embeds": {
+        "showLastRestart": false,
+        "showRestartCount": false,
+        "includeStatusChangeInfo": false,
+        "includeImmediateNotificationFlag": false
+      }
+    },
+    "verbose": {
+      "embeds": {
+        "showProcessInfo": true
+      },
+      "logging": {
+        "level": "debug",
+        "logToFile": true
+      }
+    }
+  }
+}

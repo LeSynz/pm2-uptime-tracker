@@ -11,6 +11,27 @@ class PM2Service extends EventEmitter {
 		this.lastRestartTime = null;
 	}
 
+	async connect() {
+		return new Promise((resolve, reject) => {
+			pm2.connect((err) => {
+				if (err) {
+					logger.error(`Error connecting to PM2: ${err.message}`);
+					reject(err);
+					return;
+				}
+				resolve();
+			});
+		});
+	}
+
+	async disconnect() {
+		return new Promise((resolve) => {
+			pm2.disconnect(() => {
+				resolve();
+			});
+		});
+	}
+
 	async startMonitoring() {
 		if (this.isMonitoring) return;
 
@@ -131,6 +152,18 @@ class PM2Service extends EventEmitter {
 						processInfo: processInfo,
 					});
 				});
+			});
+		});
+	}
+
+	async getAllProcesses() {
+		return new Promise((resolve, reject) => {
+			pm2.list((err, processes) => {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve(processes);
 			});
 		});
 	}

@@ -1,5 +1,64 @@
 const path = require('path');
-const embeds = require(path.join(__dirname, '..', '..', 'embeds.json'));
+const fs = require('fs');
+
+// Load embeds from file or use defaults
+function loadEmbeds(embedsFile = 'embeds.json') {
+	const embedsPath = path.join(__dirname, '..', '..', embedsFile);
+
+	try {
+		if (fs.existsSync(embedsPath)) {
+			return require(embedsPath);
+		}
+	} catch (error) {
+		console.warn(
+			`Warning: Could not load ${embedsFile}, using default embeds`
+		);
+	}
+
+	// Default embeds if file doesn't exist
+	return {
+		restarting: {
+			title: '$processName - Restarting',
+			description: 'The process is currently restarting.',
+			color: 4380038,
+		},
+		online: {
+			title: '$processName - Online',
+			description: 'The process is online and running.',
+			fields: [
+				{
+					name: 'Uptime',
+					value: '$uptime',
+				},
+				{
+					name: 'Last Restart',
+					value: '$lastRestart',
+				},
+			],
+			color: 4380024,
+		},
+		offline: {
+			title: '$processName - Offline',
+			description: 'The process is currently offline.',
+			color: 16711680,
+		},
+		error: {
+			title: '$processName - Error',
+			description: 'The process has encountered an error.',
+			color: 16711680,
+		},
+		unknown: {
+			title: '$processName - Status Unknown',
+			description: 'The status of the process is unknown.',
+			color: 16777215,
+		},
+		'not-found': {
+			title: '$processName - Not Found',
+			description: 'The process could not be found in PM2.',
+			color: 16711680,
+		},
+	};
+}
 
 function formatUptime(uptime) {
 	const seconds = Math.floor((uptime / 1000) % 60);
@@ -28,8 +87,14 @@ function createStatusEmbed(
 	status,
 	uptime,
 	lastRestart,
-	metadata = {}
+	metadata = {},
+	config = null
 ) {
+	const embedsFile = config?.embeds?.embedsFile || 'embeds.json';
+	const embeds = config?.embeds?.useCustomEmbeds
+		? loadEmbeds(embedsFile)
+		: loadEmbeds();
+
 	let embedTemplate;
 
 	// Map PM2 status to embed types
@@ -46,13 +111,14 @@ function createStatusEmbed(
 			embedTemplate = embeds.error;
 			break;
 		case 'one-launch-status':
+		case 'restarting':
 			embedTemplate = embeds.restarting;
 			break;
 		case 'not-found':
 			embedTemplate = embeds.error;
 			break;
 		default:
-			embedTemplate = embeds.unknown;
+			embedTemplate = embeds.unknown || embeds.generic;
 	}
 
 	// Clone the template to avoid modifying the original
@@ -75,10 +141,27 @@ function createStatusEmbed(
 				.replace(/\$lastRestart/g, formatLastRestart(lastRestart))
 				.replace(/\$processName/g, processName),
 		}));
+
+		// Filter out fields based on config
+		embed.fields = embed.fields.filter((field) => {
+			if (
+				config?.embeds?.showUptime === false &&
+				field.name.toLowerCase().includes('uptime')
+			) {
+				return false;
+			}
+			if (
+				config?.embeds?.showLastRestart === false &&
+				field.name.toLowerCase().includes('restart')
+			) {
+				return false;
+			}
+			return true;
+		});
 	}
 
 	// Add additional fields for status changes and restarts
-	if (metadata.statusChanged) {
+	if (config?.embeds?.includeStatusChangeInfo && metadata.statusChanged) {
 		embed.fields = embed.fields || [];
 		embed.fields.push({
 			name: 'Status Change',
@@ -87,7 +170,7 @@ function createStatusEmbed(
 		});
 	}
 
-	if (metadata.restartDetected) {
+	if (config?.embeds?.showRestartCount && metadata.restartDetected) {
 		embed.fields = embed.fields || [];
 		embed.fields.push({
 			name: 'Restart Detected',
@@ -96,7 +179,10 @@ function createStatusEmbed(
 		});
 	}
 
-	if (metadata.immediate) {
+	if (
+		config?.embeds?.includeImmediateNotificationFlag &&
+		metadata.immediate
+	) {
 		embed.fields = embed.fields || [];
 		embed.fields.push({
 			name: 'Alert Type',
@@ -105,7 +191,7 @@ function createStatusEmbed(
 		});
 	}
 
-	if (metadata.error) {
+	if (config?.embeds?.includeErrorDetails && metadata.error) {
 		embed.fields = embed.fields || [];
 		embed.fields.push({
 			name: 'Error',
@@ -114,15 +200,46 @@ function createStatusEmbed(
 		});
 	}
 
-	// Add timestamp
-	embed.timestamp = new Date().toISOString();
+	// Add process info if enabled
+	if (config?.embeds?.showProcessInfo && metadata.processInfo) {
+		embed.fields = embed.fields || [];
+		embed.fields.push({
+			name: 'Process Info',
+			value: `PID: ${metadata.processInfo.pid}\nMemory: ${metadata.processInfo.memory}MB\nCPU: ${metadata.processInfo.cpu}%`,
+			inline: true,
+		});
+	}
+
+	// Add restart count if enabled and available
+	if (
+		config?.embeds?.showRestartCount &&
+		metadata.restartCount !== undefined
+	) {
+		embed.fields = embed.fields || [];
+		embed.fields.push({
+			name: 'Restart Count',
+			value: `${metadata.restartCount}`,
+			inline: true,
+		});
+	}
+
+	// Add timestamp if enabled
+	if (config?.embeds?.showTimestamp !== false) {
+		embed.timestamp = new Date().toISOString();
+	}
 
 	return embed;
 }
-
 // Backward compatibility function
-function createUptimeEmbed(processName, uptime, lastRestart) {
-	return createStatusEmbed(processName, 'online', uptime, lastRestart);
+function createUptimeEmbed(processName, uptime, lastRestart, config = null) {
+	return createStatusEmbed(
+		processName,
+		'online',
+		uptime,
+		lastRestart,
+		{},
+		config
+	);
 }
 
 module.exports = {
@@ -130,4 +247,5 @@ module.exports = {
 	formatLastRestart,
 	createStatusEmbed,
 	createUptimeEmbed,
+	loadEmbeds,
 };
